@@ -18,6 +18,7 @@ class Dataset:
     data: jax.Array
     batch_size: int
     block_size: int
+    loop: bool = field(default=True)
 
     def __post_init__(self):
         if self.data.ndim != 1:
@@ -39,10 +40,13 @@ class Dataset:
 
     def __next__(self) -> tuple[jax.Array, jax.Array]:
         if self._batch_idx >= self.num_batches:
-            raise StopIteration
+            if self.loop:
+                self._batch_idx = 0
+            else:
+                raise StopIteration
         start_idx = self._batch_idx * self.batch_size * self.block_size
         end_idx = (self._batch_idx + 1) * self.batch_size * self.block_size
-        x = self.data[start_idx : end_idx]
-        y = self.data[start_idx + 1 : end_idx + 1]
+        x = self.data[start_idx : end_idx].reshape(self.batch_size, self.block_size)
+        y = self.data[start_idx + 1 : end_idx + 1].reshape(self.batch_size, self.block_size)
         self._batch_idx += 1
         return x, y

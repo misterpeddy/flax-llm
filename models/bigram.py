@@ -29,6 +29,9 @@ class BigramLM(nn.Module):
             inputs = top_1
         return gen
 
+def cross_entropy(logits: jax.Array, targets: jax.Array) -> jnp.ndarray:
+    """Computes cross entropy loss given logits and labels."""
+    return -jnp.mean(jnp.sum(nn.log_softmax(logits) * targets, axis=-1))
 
 if __name__ == "__main__":
     """Example usage."""
