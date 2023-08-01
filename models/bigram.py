@@ -13,25 +13,22 @@ class BigramLM(nn.Module):
     vocab_size: int
 
     @nn.compact
-    def __call__(self, inputs):
-        """Looks up inputs in a lookup table to assign log prob to each vocab element."""
-        return nn.Embed(num_embeddings=self.vocab_size, features=self.vocab_size)(inputs)
+    def __call__(self, x: jax.Array) -> jax.Array:
+        """Looks up x in a lookup table to assign log prob to each vocab element."""
+        return nn.Embed(num_embeddings=self.vocab_size, features=self.vocab_size)(x)
 
-    def generate(self, rng_key: jax.Array, params: FrozenDict, inputs: jax.Array, seq_len: int = 1) -> jax.Array:
-        """Continues inputs [B, T] to generate [B, seq_len] outputs."""
-        inputs = inputs[:, -1]
-        gen = jnp.zeros((inputs.shape[0], seq_len))
+    def generate(self, rng_key: jax.Array, params: FrozenDict, x: jax.Array, seq_len: int = 1) -> jax.Array:
+        """Continues x [B, T] to generate [B, seq_len] outputs."""
+        x = x[:, -1]
+        gen = jnp.zeros((x.shape[0], seq_len))
         for i in range(seq_len):
-            logits = self.apply(variables=params, inputs=inputs)
+            logits = self.apply(variables=params, x=x)
             rng_key, rng_subkey = jax.random.split(rng_key)
             top_1 = jax.random.categorical(rng_subkey, logits)
             gen = gen.at[:, i].set(top_1)
-            inputs = top_1
+            x = top_1
         return gen
 
-def cross_entropy(logits: jax.Array, targets: jax.Array) -> jnp.ndarray:
-    """Computes cross entropy loss given logits and labels."""
-    return -jnp.mean(jnp.sum(nn.log_softmax(logits) * targets, axis=-1))
 
 if __name__ == "__main__":
     """Example usage."""
@@ -46,6 +43,6 @@ if __name__ == "__main__":
 
     params = model.init(random_key, random_x)
 
-    gen = model.generate(random_key, params, inputs=random_x, seq_len=2)
+    gen = model.generate(random_key, params, x=random_x, seq_len=2)
 
     print(gen)
