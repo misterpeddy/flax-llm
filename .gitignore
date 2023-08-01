@@ -1,3 +1,5 @@
+scratchpad.ipynb
+
 # Ignore compiled Python files
 __pycache__/
 *.py[cod]
