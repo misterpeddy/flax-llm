@@ -5,8 +5,8 @@ from flax import linen as nn
 import jax
 import jax.numpy as jnp
 
-FrozenDict = flax.core.FrozenDict
 
+FrozenDict = flax.core.FrozenDict
 
 class BigramLM(nn.Module):
 
