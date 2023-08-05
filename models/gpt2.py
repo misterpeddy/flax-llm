@@ -48,7 +48,6 @@ class MultiHeadAttention(nn.Module):
         return x
 
 
-@dataclass(frozen=True)
 class MLP(nn.Module):
 
     dtype: jnp.dtype = jnp.float32
@@ -88,7 +87,7 @@ class Block(nn.Module):
         return x
 
 
-class GPT(nn.Module):
+class GPT2LM(nn.Module):
 
     vocab_size: int = 50304
     num_embeds: int = 768
@@ -126,7 +125,7 @@ class GPT(nn.Module):
 
 if __name__ == "__main__":
     """Example usage."""
-    model = GPT()
+    model = GPT2LM()
     rng_key = jax.random.PRNGKey(seed=42)
     batch_size = 4
     block_size = 8

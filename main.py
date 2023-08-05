@@ -24,13 +24,13 @@ def train(
         batch_size: int = 64,
         block_size: int = 2,
         lr: int = 1e-3) -> tuple[nn.Module, jnp.ndarray]:
-    """Trains a bigram language model on a toy dataset."""
+    """Trains a language model on a toy dataset."""
     rng_key = jax.random.PRNGKey(seed=seed)
 
     # Initialize model.
     tokenizer = char_tokenizer.Tokenizer.from_text(
         char_tokenizer.EXAMPLE_INPUT_PATH)
-    model = get_model(model_name)
+    model = get_model(model_name)(vocab_size=tokenizer.vocab_size)
     params = model.init(rng_key, jnp.zeros(
         (batch_size, block_size), dtype=jnp.int32))
 
