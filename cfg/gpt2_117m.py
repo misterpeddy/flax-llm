@@ -30,6 +30,6 @@ def get_cfg() -> fdl.Config[trainer.Trainer]:
         batch_size=8,
         block_size=1024,
         lr=1e-3,
-        tokenizer_cls=char_tokenizer.Tokenizer,
+        tokenizer=tokenizer,
         train_data_path=char_tokenizer.EXAMPLE_INPUT_PATH,
     )

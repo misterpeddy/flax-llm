@@ -21,14 +21,13 @@ class Trainer:
 
     train_data_path: str
 
-    tokenizer_cls: type[data.Tokenizer]
+    tokenizer: data.Tokenizer
     loss_fn: Callable[[nn.Module], Callable] = model_utils.cross_entropy_loss
 
     def train(self):
         rng_key = jax.random.PRNGKey(seed=self.seed)
 
         # Initialize model.
-        tokenizer = self.tokenizer_cls.from_text(self.train_data_path)
         params = self.model.init(rng_key, jnp.zeros(
             (self.batch_size, self.block_size), dtype=jnp.int32))
 
@@ -38,7 +37,7 @@ class Trainer:
 
         # Initialize dataset.
         dataset = data.Dataset.from_file(self.train_data_path,
-                                         tokenizer=tokenizer,
+                                         tokenizer=self.tokenizer,
                                          batch_size=self.batch_size,
                                          block_size=self.block_size)
 
