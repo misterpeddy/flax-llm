@@ -81,9 +81,9 @@ class Block(nn.Module):
         self.mlp = MLP()
 
     def __call__(self, x, mask=None, deterministic=None) -> jax.Array:
+        # Add because of residual connection.
         x = x + self.attn(self.pre_attn_ln(x), mask, deterministic)
-        mlp = self.mlp(self.post_attn_ln(x), deterministic)
-        x = x + mlp
+        x = x + self.mlp(self.post_attn_ln(x), deterministic)
         return x
 
 
@@ -119,7 +119,11 @@ class GPT2LM(nn.Module):
                 x, attn_mask, deterministic)
 
         x = nn.LayerNorm(name="layer_norm")(x)
+
+        # Used to share weights b/w wte and lm head's kernels.
+        # https://paperswithcode.com/method/weight-tying
         logits = wte.attend(x)
+
         return logits
 
 
