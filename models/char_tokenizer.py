@@ -10,7 +10,7 @@ class Tokenizer:
     """Simple tokenizer for character-level language models."""
 
     def __init__(self, chars: list[str]):
-        self.vocab_size = len(chars)
+        self._vocab_size = len(chars)
         self.chars = chars
         self.stoi = {ch: i for i, ch in enumerate(chars)}
         self.itos = {i: ch for i, ch in enumerate(chars)}
@@ -23,6 +23,10 @@ class Tokenizer:
         chars = sorted(list(set(text))) 
         return cls(chars)
 
+    @property
+    def vocab_size(self) -> int:
+        return self._vocab_size
+        
     def encode(self, s: str) -> list[int]:
         return [self.stoi[c] for c in s]
 

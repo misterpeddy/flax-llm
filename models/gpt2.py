@@ -90,7 +90,7 @@ class Block(nn.Module):
 class GPT2LM(nn.Module):
 
     vocab_size: int = 50304
-    num_embeds: int = 768
+    emb_dim: int = 768
     block_size: int = 1024
     num_layers: int = 12
     dtype: jnp.dtype = jnp.float32
@@ -104,9 +104,9 @@ class GPT2LM(nn.Module):
         attn_mask = nn.make_causal_mask(x, dtype=bool)  # [B, 1, T, T]
 
         wte = nn.Embed(num_embeddings=self.vocab_size,
-                       features=self.num_embeds, dtype=self.dtype, name="wte")
+                       features=self.emb_dim, dtype=self.dtype, name="wte")
         wpe = nn.Embed(num_embeddings=self.block_size,
-                       features=self.num_embeds, dtype=self.dtype, name="wpe")
+                       features=self.emb_dim, dtype=self.dtype, name="wpe")
 
         token_embed = wte(x)    # [B, T, C]
         pos_embed = wpe(pos)    # [1, T, C]

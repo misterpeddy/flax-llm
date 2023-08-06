@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from typing import Any, Callable
 
-import fiddle as fdl
 import jax
 import jax.numpy as jnp
 import flax.linen as nn
@@ -13,7 +12,7 @@ from models import utils as model_utils
 
 @dataclass
 class Trainer:
-    model_cls: type[Any]
+    model: Any
     num_steps: int
     seed: int
     batch_size: int
@@ -30,8 +29,7 @@ class Trainer:
 
         # Initialize model.
         tokenizer = self.tokenizer_cls.from_text(self.train_data_path)
-        model = self.model_cls(vocab_size=tokenizer.vocab_size)
-        params = model.init(rng_key, jnp.zeros(
+        params = self.model.init(rng_key, jnp.zeros(
             (self.batch_size, self.block_size), dtype=jnp.int32))
 
         # Initialize optimizer.
@@ -47,10 +45,10 @@ class Trainer:
         # Run training loop.
         for i in range(self.num_steps):
             x, y = next(dataset)
-            loss_fn = self.loss_fn(model)
+            loss_fn = self.loss_fn(self.model)
             loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
             print(f"Step {i} | Loss: {loss:.3f}")
             updates, optimizer_state = optimizer.update(grads, optimizer_state)
             params = optax.apply_updates(params, updates)
 
-        return model, params
+        return self.model, params
