@@ -5,9 +5,10 @@ import jax
 import jax.numpy as jnp
 import flax.linen as nn
 import optax
+import wandb
 
 from data import data
-from models import utils as model_utils 
+from models import utils as model_utils
 
 
 @dataclass
@@ -47,6 +48,8 @@ class Trainer:
             loss_fn = self.loss_fn(self.model)
             loss, grads = jax.value_and_grad(loss_fn)(params, x, y)
             print(f"Step {i} | Loss: {loss:.3f}")
+            if wandb.run is not None:
+                wandb.log({"loss": loss}, step=i)
             updates, optimizer_state = optimizer.update(grads, optimizer_state)
             params = optax.apply_updates(params, updates)
 

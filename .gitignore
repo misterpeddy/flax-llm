@@ -34,3 +34,9 @@ pip-log.txt
 
 # Streamlit secrets and configs
 *.streamlit
+
+# Ignore wandb files
+wandb/
+
+# Ignore environment setup file
+env.sh

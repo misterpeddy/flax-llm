@@ -3,14 +3,14 @@ import jax.numpy as jnp
 
 from models import bigram
 import trainer
-from data import data
 from models import char_tokenizer
 
 
 def get_cfg() -> fdl.Config[trainer.Trainer]:
 
     # TODO: convert to fiddle config.
-    tokenizer = char_tokenizer.Tokenizer.from_text(char_tokenizer.EXAMPLE_INPUT_PATH)
+    tokenizer = char_tokenizer.Tokenizer.from_text(
+        char_tokenizer.EXAMPLE_INPUT_PATH)
 
     mdl_cfg = fdl.Config(
         bigram.BigramLM,

@@ -3,7 +3,6 @@ import jax.numpy as jnp
 
 from models import gpt2
 import trainer
-from data import data
 from models import char_tokenizer
 
 
@@ -30,6 +29,6 @@ def get_cfg() -> fdl.Config[trainer.Trainer]:
         batch_size=8,
         block_size=1024,
         lr=1e-3,
-        tokenizer=tokenizer,
+        tokenizer=char_tokenizer.Tokenizer,
         train_data_path=char_tokenizer.EXAMPLE_INPUT_PATH,
     )
